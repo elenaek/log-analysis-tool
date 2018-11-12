@@ -41,5 +41,19 @@ def getMostPopularAuthors(num):
     db.close()
     return results
 
+def getErrors(percent):
+    query = '''    
+        select cast(er.errors as float)/cast(tr.total_requests as float)*100 as error_percentage, er.day
+        from errors_per_day er, requests_per_day tr
+        where er.day = tr.day AND cast(er.errors as float)/cast(tr.total_requests as float)*100 > %s
+    '''
+    db = psycopg2.connect(database=DBNAME)
+    cursor = db.cursor()
+    cursor.execute(query, (str(percent), ))
+    results = cursor.fetchall()
+    db.close()
+    return results
+
 print(getMostPopularArticles(3))
 print(getMostPopularAuthors(10))
+print(getErrors(1))
