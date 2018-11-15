@@ -11,9 +11,12 @@ This guide assumes you already have:
 
 ### Import the mock database/data using PSQL
 
+Download newsdata.sql here: [newsdata.sql](https://d17h27t6h515a5.cloudfront.net/topher/2016/August/57b5f748_newsdata/newsdata.zip)
+
 Run this command in the directory that contains newsdata.sql: `psql -d news -f newsdata.sql` 
 
 This will create a database called `news` with some mock data.
+
 
 ### Create these views in PSQL
 
@@ -52,16 +55,22 @@ This command will generate the reports as output in the console.
 This tool uses the `psycopg2` module to query a **PSQL** database `news` in order to generate reports.
 
 ### Query Functions
+
+ `queryNewsDatabase(queryString, queryParam)`: creates the connection with the database and queries it using the queryString and queryParam parameters. 
+
+ Parameter: `queryString` is the SQL query used against the database.
+
+ Parameter: `queryParam` is the parameter that the queryString uses to evaluate its variable value.
  
- `getMostPopularArticles(numArticles)`: returns a list of tuples with the most popular articles sorted by descending order. The output contains article title and the number of times that article has been viewed.
+ `getMostPopularArticles(numArticles)`: returns a list of tuples with the most popular articles sorted by descending order. The output contains article title and the number of times that article has been viewed. Uses `queryNewsDatabase()` to query the database.
  
  Parameter: `numArticles` determines how many articles are returned.
  
- `getMostPopularAuthors(numAuthors)`: returns a list of tuples with the most popular authors determined by the aggregate sum of views from articles they have written. The output contains author name and their total views summed from all their articles. Sorted by descending order.
+ `getMostPopularAuthors(numAuthors)`: returns a list of tuples with the most popular authors determined by the aggregate sum of views from articles they have written. The output contains author name and their total views summed from all their articles. Sorted by descending order. Uses `queryNewsDatabase()` to query the database.
  
  Parameter: `numAuthors` determines how many authors are returned.
  
- `def getErrors(percentErrors)`: returns a list of tuples with the days where the amount of errors exceeds the `percentErrors` parameter. The output contains the date and the % of errors that day.
+ `getErrors(percentErrors)`: returns a list of tuples with the days where the amount of errors exceeds the `percentErrors` parameter. The output contains the date and the % of errors that day. Uses `queryNewsDatabase()` to query the database.
  
  Parameter: `percentErrors` determines the threshold for reporting dates. When the number of errors in a given day crosses the percentage passed here, that day will be added to the output.
  

@@ -7,6 +7,17 @@ import psycopg2
 # Name of database
 DBNAME = "news"
 
+# Function that queries the PSQL database with the given query string and parameter, returns the result as a list of tuples
+def queryDatabase(queryString, queryStringParam):
+    db = psycopg2.connect(database=DBNAME)
+    try:
+        cursor = db.cursor()
+    except:
+        print("There was an error connecting to {database}".format(database=DBNAME))
+    cursor.execute(queryString, (queryStringParam, ))
+    results = cursor.fetchall()
+    db.close()
+    return results
 
 # Function that returns the most popular articles,
 # rows limited by numArticles parameter,
@@ -20,12 +31,7 @@ def getMostPopularArticles(numArticles):
         order by views desc
         limit %s
     '''
-    db = psycopg2.connect(database=DBNAME)
-    cursor = db.cursor()
-    cursor.execute(query, (str(numArticles), ))
-    results = cursor.fetchall()
-    db.close()
-    return results
+    return queryDatabase(query, str(numArticles))
 
 
 # Function that returns the most popular
@@ -41,12 +47,7 @@ def getMostPopularAuthors(numAuthors):
         order by views desc
         limit %s
     '''
-    db = psycopg2.connect(database=DBNAME)
-    cursor = db.cursor()
-    cursor.execute(query, (str(numAuthors), ))
-    results = cursor.fetchall()
-    db.close()
-    return results
+    return queryDatabase(query, str(numAuthors))
 
 
 # Function that retrives the days where the percentage of errors exceed the
@@ -57,12 +58,7 @@ def getErrors(percentErrors):
         from errors_per_day er, requests_per_day tr
         where er.day = tr.day AND cast(er.errors as float)/cast(tr.total_requests as float)*100 > %s
     '''
-    db = psycopg2.connect(database=DBNAME)
-    cursor = db.cursor()
-    cursor.execute(query, (str(percentErrors), ))
-    results = cursor.fetchall()
-    db.close()
-    return results
+    return queryDatabase(query, str(percentErrors))
 
 
 # Function that outputs a report, formatted to match the project criteria
